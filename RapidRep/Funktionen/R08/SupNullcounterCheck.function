@@ -1,0 +1,9 @@
+/////////----- Checks if char is set instead of NULL. -----/////////
+
+
+if ($Countermark == '?' || $Countermark == '#' || $Countermark == '-' || $Countermark == '. ?'){ 
+  return true;
+}
+  else {
+    return false;
+  } 

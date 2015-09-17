@@ -1,0 +1,31 @@
+Rule 03: Denomination/Material-Check
+
+Rule 03 a) Equal Denomiantion and Material
+Rule 03 b) Material_Uncertainty
+ 
+ 
+Some of the listed Denominations resemble Materials, like the Denomination "gold" for example.
+ 
+a) If a coinfind.Denomination resembles a Material-value, coinfind.Material and coinfind.Denomination should be equal.
+b) If coinfind.Material and coinfind.Denomination equal, the Material_Uncertainty-flag should not be set (but it is okay, not to be sure in Denomination, then). 
+ 
+ 
+Implementation: 
+1. Script R03_J1 joins the tables 'denomination' and 'material' via 'Name_en' (same result by joining via UPPER(material.Nomisma) = UPPER(denomination.Shortcut)) with the table 'coinfind' via the Denomination-ID. It also joins the table 'coinpeculiarities' to ensure, differing values are not caused by this.
+Columns: 
+'Record_CoinfindID' is the 'id' from 'coinfind',
+'Record_MaterialId' is the ID of the material listet in coinfind-record, 
+'Expected_MaterialId' is the ID of the material which is implied by the Denomination-entry from this coinfind-record,
+'Record_Material_Uncertainty' from 'coinfind',
+'Record_MaterialName'
+'Record_DenominationName' is the name of the denomination-value from this coinfind-record. It is the name of the expected material, too,
+'Record_DenominationId' from 'coinfind',
+'Record_DenominationId2' from 'coinfind'
+'Record_Denomination_Uncertainty'
+'Record_Peculiarities' is the ID of peculiarity from 'coinpeculiarities' 
+
+2. Function DenomMatCheck compares 'Expected_MaterialId' and 'Record_MaterialId'. Rule takes effect on disparity.
+ 
+3. Function DenomMatCheck2 compares Denomination (which is the same like 'Expected_MaterialId', here) and 'Record_MaterialId'. If they equal and the 'Record_Material_Uncertainty'-Flag is set, the rule takes effect.
+ 
+4. Script applies rules

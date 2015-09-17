@@ -1,0 +1,17 @@
+/////////----- Checks if a Findspot and its assigned Place have a difference in latitude and longitude. If there is no difference the admindivision of both is compared (should be equal then). -----/////////
+
+
+function d2r(deg) { //degrees to rad
+  return deg * (Math.PI/180);
+}
+
+var R = 6371000;  //mean earth radius in metres
+var deltalat = d2r($PlaceLatitude-$SpotLatitude);
+var deltalon = d2r($PlaceLongitude-$SpotLongitude);
+var dist = Math.sin(deltalat/2) * Math.sin(deltalat/2) +
+    Math.cos(d2r($SpotLatitude)) * Math.cos(d2r($PlaceLatitude)) *
+    Math.sin(deltalon/2) * Math.sin(deltalon/2) ;
+dist = 2 * Math.atan2(Math.sqrt(dist), Math.sqrt(1-dist));
+dist = dist * R;
+
+return dist; 

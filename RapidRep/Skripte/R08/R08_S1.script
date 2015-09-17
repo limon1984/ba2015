@@ -1,0 +1,13 @@
+SELECT A.id, A.DateWritten, A.Countermark, A.YearFound, B.ReferenceName
+      
+FROM `afergk`.`coinfind` A
+
+INNER JOIN `afergk`.`coinreferences` B
+
+ON A.id = B.id_coin
+
+
+WHERE A.DateWritten IS NOT NULL
+OR A.Countermark IS NOT NULL
+OR A.YearFound IS NOT NULL
+OR B.ReferenceName IS NOT NULL

@@ -1,0 +1,8 @@
+/////////----- Checks if coinfind.DateTo and issuer.active_to is chronological convenient (coinfind.DateWritten uneligible)-----/////////
+
+if (($active_to == null || $DateTo == null) || ($active_to >= $DateTo)){
+  return false;
+  }
+  else {
+return true;
+}

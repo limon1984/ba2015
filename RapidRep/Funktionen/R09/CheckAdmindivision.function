@@ -1,0 +1,22 @@
+/////////----- Checks if a Findspot and its assigned Place have a difference in latitude and longitude. If there is no difference the admindivision of both is compared (should be equal then). -----/////////
+
+
+if (
+
+    (($SpotLatitude == $PlaceLatitude) && ($SpotLongitude == $PlaceLongitude))    //If coordinates in Findspot and Place are equal
+     && (
+             (($SpotAdmindivision.length == $PlaceAdmindivision.length) &&         //admindivision should be equal, too. 
+                ($SpotAdmindivision != $PlaceAdmindivision))                      //respective first part of admindivision
+          || (($SpotAdmindivision.length > $PlaceAdmindivision.length) && 
+                ($SpotAdmindivision.substr(0, $PlaceAdmindivision.length) != $PlaceAdmindivision))
+          || (($SpotAdmindivision.length < $PlaceAdmindivision.length) && 
+                ($SpotAdmindivision != $PlaceAdmindivision.substr(0, $SpotAdmindivision.length)))
+         )
+      )
+      {               
+      return true;
+}  
+
+else {
+  return false;
+} 

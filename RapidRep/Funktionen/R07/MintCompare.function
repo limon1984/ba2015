@@ -1,0 +1,10 @@
+/////////----- Checks if Period has the value that the cointype mostly is associated with, in the database. -----/////////
+
+
+if ($ReferencePeriod == $Period){ 
+  return false;
+}
+  else {
+    return true;
+  }
+ 

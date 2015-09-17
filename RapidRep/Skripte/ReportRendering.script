@@ -1,0 +1,4 @@
+﻿#set($resultSet = $RR.getResultSetMatrix("SELECT * FROM $rulesAFE.R00()","internal_join_engine" ))   ## Saves SELECT on rules and the implied output in variable 
+#foreach($emil in $resultSet) 
+"$emil.get(2)","$emil.get(3)",$emil.get(4)
+#next

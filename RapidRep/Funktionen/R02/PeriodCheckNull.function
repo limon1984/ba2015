@@ -1,0 +1,8 @@
+/////////----- Checks if coinfind.DateFrom/To fits with coinfind.Period -----/////////
+
+if ($PeriodID == null){ // PeriodID: null - rule displays message, because DateFrom and DateTo is known and therefore Period should be known, too
+    return true;
+  }
+else {
+   return false;
+  } 

@@ -1,0 +1,8 @@
+/////////----- Checks if coinfind.DateFrom/To is chronological convenient -----/////////
+
+if (($DateFrom > $DateTo)&&($DateFrom != null && $DateTo != null)){ 
+  return true;
+}
+  else {
+    return false;
+  }

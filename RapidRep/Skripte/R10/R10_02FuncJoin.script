@@ -1,0 +1,79 @@
+#########################################################################################
+##                                                                                     ##
+##  *****  TABLE - COMBINATIONS OF FINDSPOTS, PLACES AND NEAREST PLACES                ##
+##                                       WHEN LAT-/LONGTITUDES AVAILABLE  *****        ##
+##                                                                                     ##
+##  IN USE:  yes                                                                       ##
+##  PURPOSE: Listing all findspot-records with their assigned places + distance,       ##
+##           nearest places + distance and further information                         ##
+##           Latitude-entry and the Longtitude-entry for both is not NULL              ##
+##  DOES:    see below                                                                 ##
+##  COLUMS:  SpotID, SpotName, SpotLatitude, SpotLongitude, SpotAdmindivision,         ##
+##           CurrentPlace, PlaceID, PlaceName, PlaceLatitude, PlaceLongitude,          ##
+##           PlaceAdmindivision, PlaceGeonamesid, PlaceRegion, PlaceRomanProvince,     ## 
+##           PlaceRhineside, CurrentDist, suggestedPlaceID, SuggestedDist              ##
+##  ELSE:                                                                              ##
+##                                                                                     ##
+#########################################################################################
+
+
+## Allocates list of FindSpots with place, distance, nearest place, distance to 
+## nearest place and other information:
+
+SELECT E."SpotID", E."SpotName", E."SpotLatitude", E."SpotLongitude", 
+       E."SpotAdmindivision", E."CurrentPlace", E."PlaceName" AS "CurrentPlaceName", 
+       E."PlaceLatitude", E."PlaceLongitude", E."PlaceAdmindivision", E."CurrentDist", 
+       F."suggestedPlaceID", F."SuggestedDist"
+FROM (
+      SELECT C.*, D.dist AS "CurrentDist"
+      FROM $CurrentReport.getScriptByName("R10_02_J1") C
+      LEFT JOIN (
+                 SELECT "SpotID", dist, "PlaceID"
+                 FROM (
+                       SELECT "SpotID", "PlaceID", 
+                               ${IDB}.GeoDist("SpotLatitude","SpotLongitude",
+                                                  "PlaceLatitude","PlaceLongitude") 
+                                                   AS dist
+                       FROM $CurrentReport.getScriptByName("R10_02_J1")
+                       ) 
+                 GROUP BY "SpotID", "PlaceID"
+                 ) D
+      ON C."SpotID" = D."SpotID" AND C."PlaceID" = D."PlaceID"
+      WHERE C."CurrentPlace" = C."PlaceID"
+      ) E
+## Allocates list of Findspots with nearest Place and distance:
+INNER JOIN (
+            ## Allocates table with all SpotIDs, and the minimal distance between 
+            ## this spot and a place:
+            SELECT A."SpotID", B."PlaceID" AS "suggestedPlaceID", A."SuggestedDist"
+            FROM(
+                 SELECT "SpotID", MIN(dist) AS "SuggestedDist"
+                 FROM (
+                       SELECT "SpotID", "PlaceID", 
+                              ${IDB}.GeoDist("SpotLatitude","SpotLongitude",
+                                                 "PlaceLatitude","PlaceLongitude") 
+                                                  AS dist
+                       FROM $CurrentReport.getScriptByName("R10_02_J1")
+                       )
+##                WHERE dist > 0   ## for testing // shows nearest place > 0
+                GROUP BY "SpotID"
+                ) A
+            INNER JOIN (  ## Join because H2-group-by "SpotID" not possible on 
+                          ## (SELECT "SpotID", MIN(dist) AS "SuggestedDist", "PlaceID")
+            ## Allocates table listing all SpotIDs combined with all PlaceIDs and the 
+            ## distance between this spots and places:
+                        SELECT "SpotID", dist, "PlaceID"
+                        FROM (
+                              SELECT "SpotID", "PlaceID", 
+                                     ${IDB}.GeoDist("SpotLatitude","SpotLongitude",
+                                                        "PlaceLatitude","PlaceLongitude") 
+                                                        AS dist
+                              FROM $CurrentReport.getScriptByName("R10_02_J1")
+                              ) 
+##                        WHERE dist > 0   ## for testing // shows nearest place > 0
+                        GROUP BY "SpotID", "PlaceID"
+                        ) B
+            WHERE A."SpotID" = B."SpotID" AND A."SuggestedDist" = B.dist
+            ) F
+
+ON E."SpotID" = F."SpotID"

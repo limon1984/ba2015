@@ -1,0 +1,40 @@
+#########################################################################################
+##                                                                                     ##
+##           *****  TABLE - COMBINATIONS OF FINDSPOTS AND PLACES                       ##
+##                              WHEN LAT-/LONGTITUDES AVAILABLE  *****                 ##
+##                                                                                     ##
+##  IN USE:  yes                                                                       ##
+##  PURPOSE: Listing all findspot-records combined with all places, in case the        ##
+##           Latitude-entry and the Longtitude-entry for both is not NULL              ##
+##  DOES:    Joins 'findspot' and 'place' via place-id, where Latitudes and            ##
+##           Longtitudes available                                                     ##
+##  COLUMS:  SpotID, SpotName, SpotLatitude, SpotLongitude, SpotAdmindivision,         ##
+##           CurrentPlace, PlaceID, PlaceName, PlaceLatitude, PlaceLongitude,          ##
+##           PlaceAdmindivision, (PlaceGeonamesid, PlaceRegion, PlaceRomanProvince,    ## 
+##           PlaceRhineside)                                                           ##
+##  ELSE:                                                                              ##
+##                                                                                     ##
+#########################################################################################
+
+SELECT  
+        A.id AS SpotID, A.Name AS SpotName, A.Latitude AS SpotLatitude, 
+        A.Longitude AS SpotLongitude, A.AdminDivision AS SpotAdmindivision, 
+        A.Place AS CurrentPlace,  
+        B.id AS PlaceID, B.Name AS PlaceName, B.Latitude AS PlaceLatitude, 
+        B.Longitude AS PlaceLongitude, B.AdminDivision AS PlaceAdmindivision 
+##        , B.Geonamesid AS PlaceGeonamesid, B.Region AS PlaceRegion, 
+##        B.RomanProvince AS PlaceRomanProvince, B.Rhineside AS PlaceRhineside
+
+FROM    
+        `afergk`.`findspot` A
+
+INNER JOIN 
+        `afergk`.`place` B 
+
+##ON A.Place=B.id
+
+WHERE 
+  A.Longitude IS NOT NULL AND 
+  B.Longitude IS NOT NULL AND
+  A.Latitude IS NOT NULL AND 
+  B.Latitude IS NOT NULL

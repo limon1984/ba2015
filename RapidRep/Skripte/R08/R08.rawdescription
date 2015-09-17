@@ -1,0 +1,12 @@
+Rule 08: SupposedNull-Check
+  
+Checks if fields that may should have NULL-values have chars instead.
+ 
+Implementation: 
+1. Scripts R08_J1 joins coinfind and coinreferences on coinID where 
+   DateWritten, Countermark, YearFound or ReferenceName has something instead of NULL
+ 
+2. Functions SupNullCounterCheck, SupNullDateCheck, SupNullRefCheck, SupNullYearCheck 
+   checking if '?', '-', '#' or '. ?' is written in one of the fields
+ 
+3. Script ApplyRulesR08 applies rules

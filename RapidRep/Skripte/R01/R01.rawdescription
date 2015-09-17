@@ -1,0 +1,33 @@
+Rule 01: Issuer/Chronology-Check
+
+Rule 01 a) DateFrom before DateTo
+Rule 01 b) active_from before active_to
+Rule 01 c) DateFrom/To within active_from/to
+ 
+  
+a) Checks if DateFrom and DateTo is chronological convenient
+b) Checks if active_from and active_to is chronological convenient
+c) Checks if the coin is issued within the issuer-timespan
+ 
+ 
+ 
+Implementation: 
+1. Script R01_J1 joins the tables 'coinfind' and 'issuers' via the table 'coinissuers'.
+Columns: 
+'CoinfindID' is the 'id' from 'coinfind',
+'IssuerID'
+'IssuerID_uncertainty', 
+'IssuerName' 
+'IssuerName_en'
+'IssuerNomisma'
+'active_from'
+'active_to'
+'DateFrom'
+'DateTo'
+'DateFrom_Uncertainty'
+'DateTo_Uncertainty' 
+'DateWritten' 
+
+2. Function DateFromToCheck checks 1a), function IssuerActiveCheck checks 1b), functions IssuerDateFromCheck and IssuerDateToCheck check 1c)
+ 
+3. Script ApplyRulesR01 applies rules

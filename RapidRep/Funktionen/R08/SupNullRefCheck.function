@@ -1,0 +1,10 @@
+/////////----- Checks if char is set instead of NULL. -----/////////
+
+
+if ($ReferenceName == '?' || $ReferenceName == '#' || $ReferenceName == '-' || $ReferenceName == '. ?'){ 
+  return true;
+}
+  else {
+    return false;
+  }
+ 

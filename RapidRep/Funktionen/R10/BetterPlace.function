@@ -1,0 +1,11 @@
+/////////----- Checks if a Findspot and its assigned Place have same distance as Findspot and nearest Place. -----/////////
+
+
+
+if ($CurrentDist == $SuggestedDist){ 
+  return false;
+}
+  else {
+    return true;
+  }
+ 

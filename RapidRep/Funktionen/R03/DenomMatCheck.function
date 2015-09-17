@@ -1,0 +1,9 @@
+/////////----- Compares 'ExpectedMaterial' and 'Material'. Rule takes effect on disparity. -----/////////
+
+if ($ExpectedMatID == $CurrMatID){ 
+  return false;
+}
+  else {
+    return true;
+  }
+

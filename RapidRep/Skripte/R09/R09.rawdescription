@@ -1,0 +1,30 @@
+Rule 09: Admindivision-Check
+ 
+ 
+Exceptionally the rule is not made for the table coinfind primarily, but rather for the tables findspot and place (which are necessary for coinind, of course). It checks the equality in Latitude- and Longtitude-values of the findspot-records and their assigned Place-values and - if they equal each other - it checks if the Amindivision of those records pars as well. If coordinates are equal and Admindivision differs, the rule displays a warning.
+ 
+Additional explanation: 
+The location at which an item is found is defined through three components: 1. admindivision, 2. place and 3. findspot. All three include columns for latitudes and longtitudes.
+1. admindivision: Represents community-keys in different elaborateness in tables (admindivision_1 to _4, with admindivision_3 having the complete community-key and _4 having an additional number that shows further information). End-users of the database can't add records here.
+2. place: (includes foreign key 'AdminDivision') Represents the excavation place. Records from this table are assigned to a single admindivision and include one column for that, despite they could reach into further admindivisions in real extent. End-users can apply entries here.
+3. findspot: (includes foreign keys 'AdminDivision' and 'Place') Represents the exact spot at which an item was found. A findspot is more specific than a place and is assigned to an admindivision, as well. A findspot is located within a place and shows the key of the assigned place in its column 'Place'. End-users can add entries here. 
+ 
+Implementation: 
+1. Script R09_J1 joins the tables 'findspot and 'place' via the place-id. Only those records with NOT-NULL-values in both 'Latitude'-, 'Longtitude'- and 'Admindivision'-columns are selected.  Columns: 
+'SpotID'                               (identification),
+'SpotName'                         (additional information),
+'SpotLatitude'                     (required for Rule), 'SpotLongtitude'                 (required for Rule),
+'SpotAdmindivision'           (required for Rule),
+'PlaceID'                            (identification), 
+'PlaceName'                      (additional information),
+'PaceLatitude'                   (required for Rule),
+'PlaceLongtitude'              (required for Rule),
+'PlaceAdmindivision'         (required for Rule), 
+'PlaceGeonamesid'           (additional information),
+'PlaceRegion'                    (additional information),
+'PlaceRomanProvince'      (additional information),
+'PlaceRhineside'               (additional information)
+ 
+ 2. Function CheckAdmindivision compares latitudes and longtitudes. If equal: function checks if admindivisions are identical, respecting part-string-equality caused by Admindivision-entries from different admindivision-tables (admindivision_1, _2, _3, or _4). Rule takes effect on disparity.
+  
+4. Script applies rules

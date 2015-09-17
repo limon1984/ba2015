@@ -1,0 +1,50 @@
+Rule 02: Period-Check
+ 
+ 
+The rule checks if the listed DateFrom and DateTo-values fit with the Period-values in the separate coinfind-records.
+A warning is also displayed, if Period is null, despite DateFrom or DateTo is given.
+Period is defined by:
+
+PeriodID: 1, Greek, 800 b.c. to 30 b.c.
+PeriodID: 2, Celtic, 330 b.c. to 1 b.c.
+PeriodID: 3, Roman, 800 b.c. to 900 a.d.
+PeriodID: 4, Greek Imperial, 30 b.c. to 270 a.d.
+PeriodID: 5, Ancient, 800 b.c. to 600 a.d.
+PeriodID: 6, Medieval, 568 a.d. to 1500 a.d.
+PeriodID: 7, Byzantine, 395 a.d. to 1453 a.d.
+PeriodID: 8, Migration period, 375 a.d. to 568 a.d.
+PeriodID: 9, Modern, 1453 a.d. to today 
+ 
+ 
+Implementation: 
+1. Script R02_J1 joins the tables 'coinfind', 'period', 'referencework' and 'coinreferences' where 'DateFrom'-, 'DateTo'- and/or 'Period'-values are not NULL. Some coinfind-records may be multiple times listed, caused by references in different literature. A leftjoin is used to make sure, coinfind-records with no listed reference in literature are in the table, too.
+Columns: 
+'id' from 'coinfind'                   (identification),
+'Mint'                                       (additional information)
+'Mint2'                                     (additional information), 
+'Material'                                 (additional information),
+'CoinImage'                              (additional information), 
+'CoinImage2'                            (additional information),
+'Status'                                     (additional information), 
+'CoinType'                                (additional information), 
+'Culture'                                   (additional information),
+'Culture_Uncertainty'              (additional information),
+'ReferenceWork'                      (additional information), 
+'ReferenceName'                     (additional information), 
+'DateWritten'                           (additional information), 
+'DateFrom_Uncertainty'          (additional information), 
+'DateTo_Uncertainty'              (additional information), 
+'DateFrom'                               (required for Rule),
+'DateTo'                                   (required for Rule),
+'PeriodID'                                 (required for Rule),
+'PeriodName'                           (additional information), 
+'PeriodName_en'                     (additional information), 
+'Period_Uncertainty'                (additional information),
+ 
+   
+
+2. Function PeriodCheck works on all entries not having NULL in DateFrom and/or DateTo. It compares the defined period-timeborders with the DateFrom/-To-values via the PeriodID.
+ 
+3. Function PeriodCheck_2 takes effect, when DateFrom/-To is listed, but Period is NULL.
+ 
+4. Script applies rules

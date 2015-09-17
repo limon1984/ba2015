@@ -1,0 +1,11 @@
+/////////----- Checks if a Findspot and its assigned Place fit with the FindSpot and Place in coinfind-record. -----/////////
+
+
+
+if ($CurrentPlaceID == $PlaceID){ 
+  return false;
+}
+  else {
+    return true;
+  }
+ 

@@ -1,0 +1,245 @@
+####################################################################################################
+##                                                                                                ##
+##  ***** TABLE - COINFIND-RECORDS WITH REFERENCE-COMPARATION-ATTRIBUTES INCL. FREQUENCIES *****  ##
+##                                                                                                ##
+##  IN USE:  yes                                                                                  ##
+##  PURPOSE: 1. listing all coinfind-records which can be typified explicit                       ## 
+##              (by ReferenceName and ReferenceWork)                                              ##
+##           2. including the frequency of this type with a specific attribute-value.             ##
+##              Here: Issuer                                                                      ##
+##           3. building a reference-table for a special attribute. reference is defined by       ##
+##              major appearance-frequency                                                        ##
+##           4. joining checkable records (from 1.) with reference,                               ## 
+##              including frequency of reference, too                                             ##
+##  DOES:    see below                                                                            ##
+##  COLUMS:  coinfindID, ReferenceName, ReferenceWork, FrequencyOfThisCombination,                ## 
+##           Issuer_Uncertainty, Issuer, ReferenceIssuer, AmountOfReference                       ##
+##  ELSE:                                                                                         ##
+##                                                                                                ##
+####################################################################################################
+
+
+## 1.: Joins clearly structured identification, built from literature (ReferenceWork) and 
+##     listing-number in this literature (ReferenceName) with the table 'coinfind'. Lists only 
+##     those coinfind-records with such an identification.
+## 2.: Selects ReferenceNames built from ciphers only
+## 3.: Deletes all NULL-Values in Issuer, because the built reference-list should not contain a cointype 
+##     with null-value as standard to compare others with it.
+## 4.: Groups all found combinations of cointypes and Issuers...
+## 5.: ...and counts the AMOUNTS of those combinations (respectively shows the size of those groups).
+## 6.: Picks all records with the highest frequency of Type-Issuer-combinations + picks the records of 
+##     the same Type and frequency, but another Issuer.
+
+
+SELECT X.CoinfindID, X.ReferenceName, X.ReferenceWork, X.FrequencyOfThisCombination, 
+       X.Issuer_Uncertainty, X.id_issuer AS Issuer, Y.Referenceid_issuer AS ReferenceIssuer, 
+       Y.AMOUNT AS AmountOfReference
+FROM (
+
+###################################################################################################BOX1
+##    BOX 1 START // BOX 1 START // BOX 1 START // BOX 1 START // BOX 1 START // BOX 1 START     ##BOX1
+###################################################################################################BOX1
+## BOX 1 builds the reference-table for Issuers associated with cointypes                        ##BOX1
+###################################################################################################BOX1
+##                                                                                               ##BOX1
+      SELECT F.*                                                                                 ##BOX1
+      FROM (                                                                                     ##BOX1
+##                                                                                               ##BOX1
+###################################################################################################BOX1
+## first part picks up all combinations of Cointypes and                                         ##BOX1
+## Issuers and shows their frequency (AMOUNT):                                                   ##BOX1
+###################################################################################################BOX1
+##                                                                                               ##BOX1
+##                                                                                               ##BOX1
+##          ## 5.:                                                                               ##BOX1
+            SELECT COUNT(*) AS AMOUNT, E.ReferenceName, E.ReferenceWork, 
+                            E.id_issuer AS Referenceid_issuer
+            FROM (
+                  ## 1.:
+                  SELECT C.*, D.*
+                  FROM (
+                        SELECT * FROM `afergk`.`coinfind` A 
+                        INNER JOIN `afergk`.`coinissuers` B 
+                        ON A.id = B.id_coin
+                        ) C
+                  INNER JOIN (
+                              SELECT A.id_coin AS CoinID, A.ReferenceName, 
+                                     A.ReferenceWork, B.Name
+                              FROM 
+                                `afergk`.`coinreferences` A
+                              INNER JOIN 
+                                `afergk`.`referencework` B
+                              WHERE 
+                                ## 2.:
+                                A.ReferenceWork = B.id 
+                                AND A.ReferenceName REGEXP '^[0-9]+$'
+                              ) D
+                  WHERE C.id=D.CoinID
+                  ) E
+             ## 3.:
+             WHERE E.id_issuer IS NOT NULL AND E.id_uncertainty = 1 AND E.id_issuer != 177  ## 177 is uncertain
+             ## 4.:
+             GROUP BY E.ReferenceName, E.ReferenceWork, E.id_issuer
+##                                                                                               ##BOX1
+##                                                                                               ##BOX1
+##                                                                                               ##BOX1
+###################################################################################################BOX1
+## still BOX 1 // second part                                                                    ##BOX1
+## ensures that reference-table includes all records with highest frequencies (AMOUNT):          ##BOX1
+###################################################################################################BOX1
+##                                                                                               ##BOX1
+             ) F                                                                                 ##BOX1
+                                                                                                 ##BOX1
+      ## 6.:
+      WHERE F.AMOUNT >= ALL ( 
+                             SELECT G.AMOUNT                                                     ##BOX1
+                             FROM (                                                              ##BOX1
+##                                                                                               ##BOX1
+###################################################################################################BOX1
+## still BOX 1 // third part equals part one                                                     ##BOX1
+## and is necessary to compare the AMOUNTs and therefore to realize the second part:             ##BOX1
+###################################################################################################BOX1
+##                                                                                               ##BOX1
+##                                                                                               ##BOX1
+##                                 ## 5.:                                                        ##BOX1
+                                   SELECT COUNT(*) AS AMOUNT, E.ReferenceName, E.ReferenceWork,
+                                                   E.id_issuer AS Referenceid_issuer
+                                   FROM (
+                                         ## 1.:
+                                         SELECT C.*, D.*
+                                         FROM (
+                                               SELECT * FROM `afergk`.`coinfind` A 
+                                               INNER JOIN `afergk`.`coinissuers` B 
+                                               ON A.id = B.id_coin
+                                               ) C
+                                         INNER JOIN (
+                                                     SELECT A.id_coin AS CoinID, A.ReferenceName, 
+                                                            A.ReferenceWork, B.Name
+                                                     FROM 
+                                                       `afergk`.`coinreferences` A
+                                                     INNER JOIN 
+                                                       `afergk`.`referencework` B
+                                                     WHERE 
+                                                       ## 2.:
+                                                       A.ReferenceWork = B.id 
+                                                       AND A.ReferenceName REGEXP '^[0-9]+$'
+                                                     ) D
+                                         WHERE C.id=D.CoinID
+                                         ) E
+                                   ## 3.:
+                                   WHERE E.id_issuer IS NOT NULL AND E.id_uncertainty = 1
+                                   ## 4.:
+                                   GROUP BY E.ReferenceName, E.ReferenceWork, E.id_issuer
+##                                                                                               ##BOX1
+##                                                                                               ##BOX1
+##                                                                                               ##BOX1
+###################################################################################################BOX1
+##                                                                                               ##BOX1
+                                   ) G                                                           ##BOX1
+                             WHERE G.ReferenceName = F.ReferenceName 
+                                   AND G.ReferenceWork = F.ReferenceWork)
+##                                                                                               ##BOX1
+###################################################################################################BOX1
+##    BOX 1 END // BOX 1 END // BOX 1 END // BOX 1 END // BOX 1 END // BOX 1 END // BOX 1 END    ##BOX1
+###################################################################################################BOX1
+      ) Y
+
+
+
+## joins BOX 1 with BOX 2 and builds the table the rule can be applied on. This table lists
+## all coinfind-records that are appropriate to check joined with their reference-value 
+## and some additional information:
+INNER JOIN (
+
+
+###################################################################################################BOX2
+##    BOX 2 START // BOX 2 START // BOX 2 START // BOX 2 START // BOX 2 START // BOX 2 START     ##BOX2
+###################################################################################################BOX2
+## BOX 2 builds the table containing all coinfind-records (with valid type) that will be checked ##BOX2
+## with this rule. Records include their appearance-frequency. Some coinfind-entries may be      ##BOX2
+## multiple times listed here, caused by different literature-allocations.                       ##BOX2
+###################################################################################################BOX2
+##                                                                                               ##BOX2
+SELECT W.FrequencyOfThisCombination, Z.*                                                         ##BOX2
+                                                                                                 ##BOX2
+FROM (                                                                                           ##BOX2
+##                                                                                               ##BOX2
+###################################################################################################BOX2
+## first part picks up all combinations of Cointypes                                             ##BOX2
+## and is built to count their frequency (FrequencyOfThisCombination):                           ##BOX2
+###################################################################################################BOX2
+##                                                                                               ##BOX2
+##                                                                                               ##BOX2
+##    ## 5.:                                                                                     ##BOX2
+      SELECT COUNT(*) AS FrequencyOfThisCombination, E.ReferenceName, 
+                         E.ReferenceWork, E.id_issuer
+      FROM (
+            ## 1.:
+            SELECT C.*, D.*
+            FROM (
+                  SELECT * FROM `afergk`.`coinfind` A 
+                  INNER JOIN `afergk`.`coinissuers` B 
+                  ON A.id = B.id_coin
+                  ) C
+            INNER JOIN (
+                        SELECT A.id_coin AS CoinID, A.ReferenceName, A.ReferenceWork, B.Name
+                        FROM 
+                          `afergk`.`coinreferences` A
+                        INNER JOIN 
+                          `afergk`.`referencework` B
+                        WHERE 
+                        ## 2.:
+                        A.ReferenceWork = B.id AND A.ReferenceName REGEXP '^[0-9]+$'
+                        ) D
+            WHERE C.id=D.CoinID
+            ) E
+       ## 3.:
+       WHERE E.id_issuer IS NOT NULL
+       ## 4.:
+       GROUP BY E.ReferenceName, E.ReferenceWork, E.id_issuer
+##                                                                                               ##BOX2
+##                                                                                               ##BOX2
+##                                                                                               ##BOX2
+###################################################################################################BOX2
+## still BOX 2 // second part joins all checkable records in order to add their frequency:       ##BOX2
+###################################################################################################BOX2
+       ) W                                                                                       ##BOX2
+
+
+INNER JOIN (
+
+            SELECT A.id AS CoinfindId, A.id_issuer, A.id_uncertainty AS Issuer_Uncertainty,
+                   B.ReferenceName, B.ReferenceWork
+            FROM (
+                  SELECT * FROM `afergk`.`coinfind` A 
+                  INNER JOIN `afergk`.`coinissuers` B 
+                  ON A.id = B.id_coin
+                  ) A
+            INNER JOIN (               ## join allocates reference-types to coinfind-records                     
+                        SELECT A.id_coin AS CoinID, A.ReferenceName, A.ReferenceWork, B.Name
+                        FROM 
+                          `afergk`.`coinreferences` A
+                        INNER JOIN                           ## join builds reference-types
+                          `afergk`.`referencework` B
+                        WHERE 
+                          A.ReferenceWork = B.id AND A.ReferenceName REGEXP '^[0-9]+$'
+                        ) B
+            WHERE A.id=B.CoinID AND A.id_issuer IS NOT NULL
+            ) Z
+
+
+WHERE W.ReferenceName = Z.ReferenceName AND W.ReferenceWork = Z.ReferenceWork 
+                                        AND W.id_issuer = Z.id_issuer
+##                                                                                               ##BOX2
+##                                                                                               ##BOX2
+##                                                                                               ##BOX2
+###################################################################################################BOX2
+##    BOX 2 END // BOX 2 END // BOX 2 END // BOX 2 END // BOX 2 END // BOX 2 END // BOX 2 END    ##BOX2
+###################################################################################################BOX2
+            ) X
+
+
+WHERE
+  X.ReferenceName = Y.ReferenceName AND X.ReferenceWork = Y.ReferenceWork
+  AND Y.AMOUNT > 1
+

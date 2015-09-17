@@ -1,0 +1,11 @@
+/////////----- Checks if issuer.active_from/to is chronological convenient -----/////////
+
+
+if (($active_from > $active_to)&&($active_from != null && $active_to != null)){ 
+  return true;
+}
+  else {
+    return false;
+  }
+
+

@@ -1,0 +1,36 @@
+/////////----- Checks if coinfind.DateFrom/To fits with coinfind.Period -----/////////
+
+
+if ($DateFrom == null && $DateTo == null){
+  return false;
+  }  
+else if ($PeriodID == 1 && ($DateFrom > -30 || $DateTo < -800)){     // PeriodID: 1, Greek, 800 b.c. to 30 b.c.
+    return true;
+  }
+else if ($PeriodID == 2 && ($DateFrom > -1 || $DateTo < -330)){     // PeriodID: 2, Celtic, 330 b.c. to 1 b.c.
+    return true;
+  }
+else if ($PeriodID == 3 && ($DateFrom > 900 || $DateTo < -800)){    // PeriodID: 3, Roman, 800 b.c. to 900 a.d.
+    return true;
+  }
+else if ($PeriodID == 4 && ($DateFrom > 270 || $DateTo < -30)){     // PeriodID: 4, Greek Imperial, 30 b.c. to 270 a.d.
+    return true;
+  }
+else if ($PeriodID == 5 && ($DateFrom > 600 || $DateTo < -800)){    // PeriodID: 5, Ancient, 800 b.c. to 600 a.d.
+    return true;
+  }
+else if ($PeriodID == 6 && ($DateFrom > 1500 || $DateTo < 568)){    // PeriodID: 6, Medieval, 568 a.d. to 1500 a.d.
+    return true;
+  }
+else if ($PeriodID == 7 && ($DateFrom > 1453 || $DateTo < 395)){    // PeriodID: 7, Byzantine, 395 a.d. to 1453 a.d.
+    return true;
+  }
+else if ($PeriodID == 8 && ($DateFrom > 568 || $DateTo < 375)){    // PeriodID: 8, Migration period, 375 a.d. to 568 a.d.
+    return true;
+  }
+else if ($PeriodID == 9 && $DateTo < 1453){                        // PeriodID: 9, Modern, 1453 a.d. to today
+    return true;
+  }
+else {
+   return false;
+  }

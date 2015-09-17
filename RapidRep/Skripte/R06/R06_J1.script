@@ -1,0 +1,71 @@
+########################################################################################
+##                                                                                    ##
+##         *****  TABLE - COINFIND-RECORDS WITH UNCERTAINTY-INFORMATION  *****        ##
+##                                                                                    ##
+##  IN USE:  yes                                                                      ##
+##  PURPOSE: Listing all cf-records combined with information about secondary         ##
+##           treatment, issuer and pecularities. cf is reduced to condition-values    ##
+##           and uncertainty-flags.                                                   ##
+##  DOES:    Joins 'coinfind', 'coinpeculiarities', 'coinsectreat' and 'coinissuers'  ##
+##  COLUMS:  see below                                                                ##
+##  ELSE:    not uncertainty of: Weight, Diameter, Findcategory, Function,            ## 
+##           YearFound, Status                                                        ##
+##                                                                                    ##
+########################################################################################
+
+
+SELECT A.id, 
+       A.Corrosion_Fs, A.Corrosion_Bs, 
+       A.Corrosion_Fs_Uncertainty, A.Corrosion_Bs_Uncertainty,
+       A.Wear_Fs, A.Wear_Bs, 
+       A.Wear_Fs_Uncertainty, A.Wear_Bs_Uncertainty,
+       A.OriginalSeen, 
+       C.id_st AS SecondaryTreatment, 
+       C.st_uncertainty AS SecondaryTreatment_Uncertainty, 
+
+         B.id_issuer AS Issuer, 
+       B.id_uncertainty AS Issuer_Uncertainty, 
+         D.id_pecu AS Peculiarity, 
+       D.pecu_uncertainty AS Peculiarity_Uncertainty, 
+         A.Material,
+       A.Material_Uncertainty,
+          A.DateFrom, A.DateTo, 
+        A.DateFrom_Uncertainty, A.DateTo_Uncertainty,
+          A.DieAxis,  
+        A.DieAxis_Uncertainty,
+          A.Period,
+        A.Period_Uncertainty,
+          A.Denomination, Denomination2,
+        A.Denomination_Uncertainty,
+          A.Mint, A.Mint2,
+        A.Mint_Uncertainty,
+          A.CoinImage, A.CoinImage2,
+        A.CoinImage_Uncertainty,
+            A.CoinType,
+        A.CoinType_Uncertainty,
+            A.Culture,
+        A.Culture_Uncertainty
+
+FROM (
+      SELECT 
+        id, Corrosion_Fs, Corrosion_Bs, Corrosion_Fs_Uncertainty, 
+        Corrosion_Bs_Uncertainty, Wear_Fs, Wear_Bs, Wear_Fs_Uncertainty, 
+        Wear_Bs_Uncertainty, OriginalSeen, Material, Material_Uncertainty, DateFrom, 
+        DateTo, DateFrom_Uncertainty, DateTo_Uncertainty, DieAxis, DieAxis_Uncertainty,
+        Period, Period_Uncertainty, Denomination, Denomination2,
+        Denomination_Uncertainty, Mint, Mint2, Mint_Uncertainty, CoinImage, CoinImage2,
+        CoinImage_Uncertainty, CoinType, CoinType_Uncertainty, Culture,
+        Culture_Uncertainty
+      FROM `afergk`.`coinfind`
+      WHERE (Corrosion_Fs IS NOT NULL AND Corrosion_Bs IS NOT NULL) 
+         OR (Wear_Fs IS NOT NULL AND Wear_Bs IS NOT NULL) 
+         OR (Corrosion_Fs IS NOT NULL AND Wear_Bs IS NOT NULL)
+         OR (Wear_Fs IS NOT NULL AND Corrosion_Bs IS NOT NULL) 
+      )A
+
+LEFT JOIN `afergk`.`coinissuers` B
+         ON A.id = B.id_coin
+LEFT JOIN `afergk`.`coinsectreat` C
+         ON A.id = C.id_coin
+LEFT JOIN `afergk`.`coinpeculiarities` D
+        ON A.id = D.id_coin

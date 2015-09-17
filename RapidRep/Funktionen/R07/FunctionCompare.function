@@ -1,0 +1,10 @@
+/////////----- Checks if Function has the value that the cointype mostly is associated with, in the database. -----/////////
+
+
+if ($ReferenceFunction == $Function){ 
+  return false;
+}
+  else {
+    return true;
+  }
+ 

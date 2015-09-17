@@ -1,0 +1,17 @@
+#set($resultSet = $RR.getResultSetMatrix("SELECT * FROM $rulesAFE.R03()" ))   ## Stores SELECT on rules and the implied output in variable "resultSet"
+
+SELECT 
+  *,
+  #foreach($e in $resultSet)      ## for row in resultSet... 
+    CASE 
+      WHEN                    
+        #evaluate($e.get(1))      ## access on column 2 (starts counting on 0) and evaluates, if functions not firsthand in rules-sheet
+      THEN   
+        '$e.get(2)' END            ## display error message
+      AS "$e.get(3)"
+    #if($foreach.hasNext()),           ## if row has a following row, set a comma
+      #else                            ## none else
+#endif     
+
+  #next 
+FROM $CurrentReport.getScriptByName("R03_J1")

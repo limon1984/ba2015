@@ -1,0 +1,19 @@
+Rule 05: Weight-Check
+  
+R05 works on comparison as well. Though the "False by Comparison"-Check is not possible with the recent database, because the typification needs corrosion-/wear-values of 0 and doesn't allow any uncertainty-flags for those values.
+The Weight-Check compares all items of same material in case values for weight, corrosion, wear, min. and max. diameter are fully available and material is certain.
+The single records have values of two items, separated by naming them with a '1' or '2' at the end. Every proper coinfind-record is once used as item1 and once as item2. So the check works on cases in which the items have same weight or item2 weighs more than item1. 
+To check the weight, an average diameter and an addition of the corrosion-/wear-values is used. The secondary treatment may take effect as well. If an item is halved, this should show up in the Min-/MaxDiameter allready, but for example a pierced item must be handled specially.
+ 
+Implementation: 
+1. Scripts R05_J1 joins coinfind with secondarytreatment (via coinsectreat) as a first, a copy of this as a second and these both (on their Material-values) as a third join where Weight, Material, Corrosion/Wear-values, DiameterMin and DiameterMax are not NULL and Material_Uncertainty is NULL. The last join lists the records with same Weight- or Weight-value of item1 higher than the one of item2.
+ 
+2. Function SameWeightCompare takes average values of both Diameters from items with same weight-entries. It checks first, if item2 is smaller and in equal/worse condition. Then it checks, if item2 is more than 1 mm smaller and in better condition. Third check is, if the items have same average size, but the condition of item two is worse. At last the function checks, if item1 is bigger/same size like item2 and has a secondary treatment that doesn't affect the diameter. Such secondary treatments are: 'Chop marc', 'Pierced', 'Suspension loop' and 'burned'.
+ 
+3. Function DifferentWeightCompare does exact the same like SameWeightCompare but for records with weight of item1 < weight of item2.
+ 
+4. Script applies rules 
+ 
+ 
+
+ 

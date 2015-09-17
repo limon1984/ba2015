@@ -1,0 +1,30 @@
+#############################################################################################
+##                                                                                         ##
+##            *****  TABLE - COINFIND-RECORDS WITH ISSUER-INFORMATION *****                ##
+##                                                                                         ##
+##  IN USE:  yes                                                                           ##
+##  PURPOSE: Listing all records combined with information about the issuer to afford the  ##
+##           comparison of the issuing-time of the issuer ('active_from' and 'active_to')  ##
+##           and the time in which the coin was printed ('DateFrom', 'DateTo')             ##
+##  DOES:    Joins 'coinfind' and 'issuer' (via 'coinissuers')                             ##
+##  COLUMS:  A:= coinfind, B:= coinissuers, C:= issuer                                     ##
+##           A.id AS CoinfindID, B.id_uncertainty AS Issuer_id_uncertainty,                ##
+##           C.id AS Issuer_id, C.Name AS Issuer_Name, C.Name_en AS Issuer_Name_en,        ##
+##           C.Nomisma AS Issuer_Nomisma, C.active_from, C.active_to, A.DateFrom,          ##
+##           A.DateTo, A.DateFrom_Uncertainty, A.DateTo_Uncertainty, A.DateWritten         ##
+##  ELSE:                                                                                  ##
+##                                                                                         ##
+#############################################################################################
+
+
+SELECT  A.id AS CoinfindID,  
+        C.id AS IssuerId, B.id_uncertainty AS IssuerId_uncertainty, C.Name AS IssuerName, 
+        C.Name_en AS IssuerName_en, C.Nomisma AS IssuerNomisma, C.active_from, C.active_to,
+        A.DateFrom, A.DateTo, A.DateFrom_Uncertainty, A.DateTo_Uncertainty, A.DateWritten
+FROM    `afergk`.`coinfind` A
+        LEFT JOIN `afergk`.`coinissuers` B ON A.id=B.id_coin
+        LEFT JOIN `afergk`.`issuer` C ON B.id_issuer = C.id
+WHERE (A.DateFrom IS NOT NULL AND A.DateTo IS NOT NULL) 
+   OR (C.active_from IS NOT NULL AND C.active_to IS NOT NULL)
+   OR (C.active_from IS NOT NULL AND A.DateTo IS NOT NULL)
+   OR (A.DateFrom IS NOT NULL AND C.active_to IS NOT NULL)

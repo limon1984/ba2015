@@ -1,0 +1,119 @@
+####################################################################################################
+##                                                                                                ##
+##         ***** TABLE - COINFIND-RECORDS JOINED WITH COINFIND-RECORDS VIA MATERIAL *****         ##
+##                                                                                                ##
+##  IN USE:  yes                                                                                  ##
+##  PURPOSE: joining all coinfindrecords with each other, when they have same material and        ##
+##           sufficient information, to compare weights. Including secondary treatments           ##
+##  DOES:    Joins coinfind with secondarytreatment via coinsectreat.                             ##
+##           Joins all records of this join with each other via Material, in case they have       ##
+##           certainty in Material. Weight, Corrosion/Wear-values, Material, DiameterMax          ##
+##           and DiameterMin must not be NULL                                                     ##
+##  COLUMS:  Id1, Id2, Material, Weight1, Weight2, DiameterMin1, DiameterMax1, DiameterMin2,      ##
+##           DiameterMax2, Corrosion_Bs1, Corrosion_Fs1, Corrosion_Bs2, Corrosion_Fs2, Wear_Bs1,  ##
+##           Wear_Fs1, Wear_Bs2, Wear_Fs2, SecTreat_id1, SecTreat_Name_en1, SecTreat_id2,         ##
+##           SecTreat_Name_en2, SecTreat_Uncertainty1, SecTreat_Uncertainty2,                     ##
+##           Weight_Uncertainty1, Weight_Uncertainty2, Corrosion_Bs_Uncertainty1,                 ##
+##           Corrosion_Fs_Uncertainty1, Corrosion_Bs_Uncertainty2, Corrosion_Fs_Uncertainty2,     ##
+##           Wear_Bs_Uncertainty1, Wear_Fs_Uncertainty1, Wear_Bs_Uncertainty2,                    ##
+##           Wear_Fs_Uncertainty2                                                                 ##
+##  ELSE:                                                                                         ##
+##                                                                                                ##
+####################################################################################################
+
+
+
+
+SELECT D.Id1, E.Id2,
+       D.Material1 AS Material,
+       D.Weight1, E.Weight2,
+       D.DiameterMin1, D.DiameterMax1, 
+       E.DiameterMin2, E.DiameterMax2,
+       D.Corrosion_Bs1, D.Corrosion_Fs1,
+       E.Corrosion_Bs2, E.Corrosion_Fs2,
+       D.Wear_Bs1, D.Wear_Fs1,
+       E.Wear_Bs2, E.Wear_Fs2,
+       D.SecTreat_id1, D.SecTreat_Name_en1, 
+       E.SecTreat_id2, E.SecTreat_Name_en2,
+       D.SecTreat_Uncertainty1, E.SecTreat_Uncertainty2,
+       D.Weight_Uncertainty1, E.Weight_Uncertainty2,
+       D.Corrosion_Bs_Uncertainty1, D.Corrosion_Fs_Uncertainty1,
+       E.Corrosion_Bs_Uncertainty2, E.Corrosion_Fs_Uncertainty2,
+       D.Wear_Bs_Uncertainty1, D.Wear_Fs_Uncertainty1,
+       E.Wear_Bs_Uncertainty2, E.Wear_Fs_Uncertainty2
+
+
+FROM (
+      SELECT  A.id AS Id1, 
+
+              A.Corrosion_Bs AS Corrosion_Bs1, A.Corrosion_Fs AS Corrosion_Fs1, 
+              A.Corrosion_Bs_Uncertainty AS Corrosion_Bs_Uncertainty1, A.Corrosion_Fs_Uncertainty AS Corrosion_Fs_Uncertainty1, 
+              A.Wear_Bs AS Wear_Bs1, A.Wear_Fs AS Wear_Fs1, 
+              A.Wear_Bs_Uncertainty AS Wear_Bs_Uncertainty1, A.Wear_Fs_Uncertainty AS Wear_Fs_Uncertainty1, 
+              A.DiameterMin AS DiameterMin1, A.DiameterMax AS DiameterMax1, 
+              A.DiameterMax_Uncertainty AS DiameterMax_Uncertainty1, A.DiameterMin_Uncertainty AS DiameterMin_Uncertainty1, 
+              A.Material AS Material1,  
+              M.id AS SecTreat_id1, M.Name_en AS SecTreat_Name_en1,
+              M.st_uncertainty AS SecTreat_Uncertainty1,
+      
+              A.Weight AS Weight1, A.Weight_Uncertainty AS Weight_Uncertainty1
+
+      
+      FROM      `afergk`.`coinfind` A
+      LEFT JOIN (
+                 SELECT Y.*, Z.* 
+                 FROM `afergk`.`coinsectreat` Y 
+                 LEFT JOIN `afergk`.`secondarytreatment` Z
+                 ON Y.id_st = Z.id
+                 ) M
+                 ON A.id=M.id_coin
+      
+      WHERE     A.Weight                   IS NOT NULL 
+            AND A.Material                 IS NOT NULL
+            AND A.Corrosion_Bs             IS NOT NULL
+            AND A.Corrosion_Fs             IS NOT NULL
+            AND A.Wear_Bs                  IS NOT NULL
+            AND A.Wear_Fs                  IS NOT NULL
+            AND A.DiameterMax              IS NOT NULL
+            AND A.DiameterMin              IS NOT NULL 
+            AND A.Material_Uncertainty     IS NULL
+      ) D
+
+RIGHT JOIN (
+      SELECT  X.id AS Id2, 
+
+              X.Corrosion_Bs AS Corrosion_Bs2, X.Corrosion_Fs AS Corrosion_Fs2, 
+              X.Corrosion_Bs_Uncertainty AS Corrosion_Bs_Uncertainty2, X.Corrosion_Fs_Uncertainty AS Corrosion_Fs_Uncertainty2, 
+              X.Wear_Bs AS Wear_Bs2, X.Wear_Fs AS Wear_Fs2, 
+              X.Wear_Bs_Uncertainty AS Wear_Bs_Uncertainty2, X.Wear_Fs_Uncertainty AS Wear_Fs_Uncertainty2, 
+              X.DiameterMin AS DiameterMin2,  X.DiameterMax AS DiameterMax2,  
+              X.DiameterMax_Uncertainty AS DiameterMax_Uncertainty2, X.DiameterMin_Uncertainty AS DiameterMin_Uncertainty2, 
+              X.Material AS Material2,  
+              L.id AS SecTreat_id2, L.Name_en AS SecTreat_Name_en2,
+              L.st_uncertainty AS SecTreat_Uncertainty2,
+      
+              X.Weight AS Weight2, X.Weight_Uncertainty AS Weight_Uncertainty2
+      
+      FROM      `afergk`.`coinfind` X
+      LEFT JOIN (
+                 SELECT Y.*, Z.* 
+                 FROM `afergk`.`coinsectreat` Y 
+                 LEFT JOIN `afergk`.`secondarytreatment` Z
+                 ON Y.id_st = Z.id
+                 ) L
+                 ON X.id=L.id_coin
+      WHERE     X.Weight                   IS NOT NULL 
+            AND X.Material                 IS NOT NULL
+            AND X.Corrosion_Bs             IS NOT NULL
+            AND X.Corrosion_Fs             IS NOT NULL
+            AND X.Wear_Bs                  IS NOT NULL
+            AND X.Wear_Fs                  IS NOT NULL
+            AND X.DiameterMax              IS NOT NULL
+            AND X.DiameterMin              IS NOT NULL 
+            AND X.Material_Uncertainty     IS NULL
+      ) E
+
+ON D.Material1 = E.Material2
+
+WHERE D.Id1 != E.Id2
+AND D.Weight1 = E.Weight2 OR D.Weight1 < E.Weight2

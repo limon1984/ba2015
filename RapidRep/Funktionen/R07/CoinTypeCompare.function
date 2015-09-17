@@ -1,0 +1,10 @@
+/////////----- Checks if CoinType has the value that the cointype (by literature-reference) mostly is associated with, in the database. -----/////////
+
+
+if ($ReferenceCoinType == $CoinType){ 
+  return false;
+}
+  else {
+    return true;
+  }
+ 

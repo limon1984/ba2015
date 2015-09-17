@@ -1,0 +1,30 @@
+#########################################################################################
+##                                                                                     ##
+##           *****  TABLE - FINDSPOT AND ASSIGNED PLACE WITH COINFIND  *****           ##
+##                                                                                     ##
+##  IN USE:  yes                                                                       ##
+##  PURPOSE: Listing all coinfind-records with their findspots and places, joined with ##
+##           the places which are assigned to the findspots in the findspot-table.     ##
+##  DOES:    Joins 'findspot' and 'place' via place-id, and joins coinfind             ## 
+##           via findsopt-id                                                           ##
+##  COLUMS:  id, CurrentPlaceID, SpotID, SpotName, PlaceID, PlaceName                  ##
+##  ELSE:                                                                              ##
+##                                                                                     ##
+#########################################################################################
+
+SELECT F.id, F.Place AS CurrentPlaceID, C.*
+FROM 
+      `afergk`.`coinfind` F
+INNER JOIN (
+            SELECT  
+                    A.id AS SpotID, A.Name AS SpotName, 
+                    B.id AS PlaceID, B.Name AS PlaceName
+            FROM    
+                    `afergk`.`findspot` A
+            
+            INNER JOIN 
+                    `afergk`.`place` B 
+            
+            ON A.Place=B.id
+            ) C
+ON F.FindSpot = C.SpotID

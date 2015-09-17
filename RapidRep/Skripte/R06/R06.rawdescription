@@ -1,0 +1,22 @@
+Rule 06: Certainty-Flag-Check by Condition 
+Rule 06 a) Uncertainty-Check by good condition
+Rule 06 b) Certainty-Check by bad condition
+ 
+  
+a) If wear and corrosion is low on both coin-sides, the original was seen and there is no secondary treatment, most attributes should be certain
+b) If wear and corrosion is high on both coin-sides, certainty is questionable in some attributes
+ 
+ 
+ 
+Implementation: 
+1. Script R06_J1 joins the tables 'coinfind' and 'coinissuers', 'coinsectreat' and 'coinpeculiarities'. Columns: 
+'id' from 'coinfind',
+'Corrosion_Fs', 'Corrosion_Bs', 
+'Corrosion_Fs_Uncertainty', 'Corrosion_Bs_Uncertainty', 'Wear_Fs', 'Wear_Bs', 'Wear_Fs_Uncertainty', 'Wear_Bs_Uncertainty', 'OriginalSeen', 'SecondaryTreatment', 'SecondaryTreatment_Uncertainty', 'Issuer', 'Issuer_Uncertainty', 'Peculiarity', 'Peculiarity_Uncertainty', 'Material', 'Material_Uncertainty', 'DateFrom', 'DateTo', 'DateFrom_Uncertainty', 'DateTo_Uncertainty', 'DieAxis', 'DieAxis_Uncertainty', 'Period', 'Period_Uncertainty', 'Denomination', 'Denomination2', 'Denomination_Uncertainty', 'Mint', 'Mint2', 'Mint_Uncertainty', 'CoinImage', 'CoinImage2', 'CoinImage_Uncertainty', 'CoinType', 'CoinType_Uncertainty', 'Culture', 'Culture_Uncertainty'  
+2. Functions **UncertaintyCheck check 06a) for **-attributes:
+   'CoinImage', 'CoinType', 'Culture', 'Date', 'Denomination', 'DieAxis', 'Issuer', 'Material', 'Mint', 'Peculiarity' and 'Period'
+ 
+3. Functions **CertaintyCheck check 06b) for **-attributes:
+   'CoinImage', 'CoinType', 'Date', 'Denomination', 'DieAxis', 'Issuer', 'Mint' and 'Peculiarity'
+ 
+4. Script ApplyRulesR06 applies rules 

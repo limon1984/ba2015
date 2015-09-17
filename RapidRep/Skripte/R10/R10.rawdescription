@@ -1,0 +1,68 @@
+Rule 10: Better Place-Check
+
+Rule 10_01 Better Place for coinfind
+Rule 10_02 Better Place for findspot
+ 
+  
+01) Checks if values 'FindSpot' and 'Place' in table 'coinfind' fit
+02) Checks if value 'Place' fits to 'FindSpot' in table 'findspot'
+ 
+ 
+ 
+Implementation: 
+01)
+1. Script R10_01_J1 joins the tables 'coinfind', 'findspot' on the FindSpotID and 'place' for additional information
+Columns: 
+'SpotID', 
+'SpotName', 
+'SpotLatitude', 
+'SpotLongitude', 
+'SpotAdmindivision',
+'CurrentPlace', 
+'PlaceID', 
+'PlaceName', 
+'PlaceLatitude', 
+'PlaceLongitude',
+'PlaceAdmindivision' 
+ 
+2. Function CheckPlace checks if CurrentPlace and PlaceID equal. If not, rule takes effect.
+ 
+3. Script ApplyRulesR10_01 applies rules
+ 
+ 
+02)
+1. Script R10_02_J1 joins the tables 'findspot' and 'place' in cartesian product, but using only findspots and places which have Latitudes and Longitudes
+Columns: 
+'id', 
+'CurrentPlaceID', 
+'SpotID', 
+'SpotName', 
+'PlaceID', 
+'PlaceName' 
+ 
+2. Function GeoDist checks distance between Latitudes/Longitudes from Findspot and Place
+ 
+3. Script R10_02FuncJoin combines Function GeoDist with skript R10_02_J1 (take a look in the script for further information) and allocates a table with following 
+Columns:
+
+'SpotID', 
+'SpotName', 
+'SpotLatitude', 
+'SpotLongitude', 
+'SpotAdmindivision',
+'CurrentPlace', 
+'PlaceName', 
+'PlaceLatitude', 
+'PlaceLongitude',
+'PlaceAdmindivision', 
+'PlaceGeonamesid', 
+'PlaceRegion', 
+'PlaceRomanProvince',
+'PlaceRhineside', 
+'CurrentDist', 
+'suggestedPlaceID', 
+'SuggestedDist'
+ 
+4. Function BetterPlace checks if CurrentPlace and suggestedDist equal
+ 
+3. Script ApplyRulesR10_02 applies rules 

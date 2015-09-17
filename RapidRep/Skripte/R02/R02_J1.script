@@ -1,0 +1,71 @@
+#########################################################################################
+##                                                                                     ##
+##        *****  TABLE - FINDSPOT AND PERIOD (WITH REFERENCENAME/-WORK)  *****         ##
+##                                                                                     ##
+##  IN USE:  yes                                                                       ##
+##  PURPOSE: Listing all coinfind-records with their assigned periods and              ##
+##           issuing-timespan. Referencenames and-works are supplemented for better    ##
+##           identification                                                            ##
+##  DOES:    Joins 'coinfind', 'period', referencework and coinreferences              ##
+##  COLUMS:  id, Mint, Mint2, Material, CoinImage, CoinImage2, Status, CoinType,       ##
+##           Culture, Culture_Uncertainty, ReferenceWork, ReferenceName, DateWritten,  ##
+##           DateFrom_Uncertainty, DateTo_Uncertainty, DateFrom, DateTo, PeriodID,     ##
+##           PeriodName, PeriodName_en, Period_Uncertainty                             ##
+##  ELSE:                                                                              ##
+##                                                                                     ##
+#########################################################################################
+
+
+
+SELECT 
+       Z.id, 
+       Z.Mint, Z.Mint2, Z.Material, Z.CoinImage, Z.CoinImage2,
+       Z.Status, Z.CoinType, Z.Culture, Z.Culture_Uncertainty,
+       C.ReferenceWork, C.ReferenceName,
+
+       Z.DateWritten,
+       Z.DateFrom_Uncertainty, Z.DateTo_Uncertainty, 
+       Z.DateFrom, Z.DateTo, 
+       Z.PeriodID, 
+       Z.PeriodName,
+       Z.PeriodName_en,
+       Z.Period_Uncertainty
+
+FROM (
+      SELECT 
+        A.id, 
+        A.Mint, A.Mint2, A.Material, A.CoinImage, A.CoinImage2,
+        A.Status, A.CoinType, A.Culture, A.Culture_Uncertainty,
+  
+        A.DateWritten,
+        A.DateFrom_Uncertainty, A.DateTo_Uncertainty, 
+        A.DateFrom, A.DateTo, 
+        A.Period AS PeriodID, 
+        B.Name AS PeriodName,
+        B.Name_en AS PeriodName_en,
+        A.Period_Uncertainty
+
+      FROM 
+        `afergk`.`coinfind` A
+
+      LEFT JOIN 
+        `afergk`.`period` B
+
+      ON A.Period = B.id 
+
+      WHERE 
+        A.DateFrom IS NOT NULL OR 
+        A.DateTo IS NOT NULL OR 
+        A.Period IS NOT NULL
+
+        ) Z
+
+LEFT JOIN (
+            SELECT X.ReferenceName, X.id_coin, Y.Name AS ReferenceWork
+            FROM `afergk`.`coinreferences` X
+            LEFT JOIN `afergk`.`referencework` Y
+            ON X.ReferenceWork = Y.id
+            ) C
+
+ON Z.id = C.id_coin
+GROUP BY Z.id

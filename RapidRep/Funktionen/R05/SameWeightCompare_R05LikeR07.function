@@ -1,0 +1,35 @@
+/////////----- Checks Weight for items with same material and same weight-value-----/////////
+
+
+var AverageDiameter1 = ($DiameterMin1 + $DiameterMax1) / 2;
+var AverageDiameter2 = ($DiameterMin2 + $DiameterMax2) / 2;
+
+var RavagesofTime1 = ($Corrosion_Bs1 + $Corrosion_Fs1 + $Wear_Bs1 + $Wear_Fs1);
+var RavagesofTime2 = ($Corrosion_Bs2 + $Corrosion_Fs2 + $Wear_Bs2 + $Wear_Fs2);
+
+
+//RULE TAKES EFFECT, IF...
+
+//...Weight is equal...
+if ($Weight1 == $Weight2){
+      //...but item2 is smaller and in equal/worse condition:
+    if (AverageDiameter1 > AverageDiameter2 && RavagesofTime1 <= RavagesofTime2){
+        return true;        
+        }
+      //...or item2 is more than 1 mm smaller and in better condition:
+     else if (AverageDiameter1 - AverageDiameter2 > 1 && RavagesofTime1 > RavagesofTime2){
+        return true;        
+        }
+      //...or if average diameter equals, item2 is in worse condition: 
+     else if (AverageDiameter1 == AverageDiameter2 && RavagesofTime1 < RavagesofTime2){
+        return true;        
+        }
+      //...or item2 is smaller/same size, but has a secondary treatment 
+      //which takes no or not only effect on the diameter
+      //(Chop mark, Pierced, Suspension loop, burned): 
+     else if (AverageDiameter1 >= AverageDiameter2 && ($SecTreat_id1 == 5 || $SecTreat_id1 == 8 || $SecTreat_id1 == 18 || $SecTreat_id1 == 29)){
+        return true;        
+        }                
+}
+
+return false; 

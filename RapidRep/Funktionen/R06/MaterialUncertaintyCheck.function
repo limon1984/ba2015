@@ -1,0 +1,15 @@
+/////////----- Checks if coins in very good condition (<3) have uncertainty in Material, despite the original is seen and there is no secondary treatment. -----/////////
+
+
+if (($Corrosion_Fs < 3 && $Wear_Fs < 3 && $Corrosion_Bs < 3 && $Wear_Bs < 3)
+    && ($Corrosion_Fs != null && $Wear_Fs != null && $Corrosion_Bs != null && $Wear_Bs != null) //item is in good condition
+    && $OriginalSeen == true             //and the original is seen
+    && $SecondaryTreatment == null          //and there is no secondary treatment
+    && $Material_Uncertainty == true){     //uncertainty should not be
+    return true;
+}
+
+//if corrosion or wear is high on min. one side or if the original coin is unseen, uncertainty is okay:
+  else {
+    return false;
+  } 

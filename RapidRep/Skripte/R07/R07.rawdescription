@@ -1,0 +1,26 @@
+Rule 07: "False by Comparison"-Check
+ 
+To apply this rule, reference-tables for several attributes were built. The reference is taken from the most frequent values of the particular attributes in combination with a cointype-identification. Values which appear with the same frequency like the most frequent ones were taken as reference-values as well.
+The referenceworks (literature) combined with the referencenames (id in the literature) provide the identification of cointypes. 
+The references are compared with the coinfind-records via their cointypes (referenceworks and referencenames).
+Coins with alternatives or uncertainty in checkable attributes and coins which can be found only once in the references will not be used for this rule. 
+ 
+Else: 
+- Material: To check the Material, coins are typified by ReferenceWork, ReferenceName and additional by the Status (because this might effect the Material).
+- Culture: is always NULL in recent Database -> empty report
+- Mint: not sure, if Mint is allowed to be different for same kind of coins... maybe one type of coins printed in different mints?
+- CoinType: References with frequency of 1 are used, because of the few available values.
+- Issuer: Uncertainty is defined by values 1 to 4, with value 1 = certain. The reference-list is built with uncertainty = 1, only
+ 
+R08 works on comparison as well. Though the "False by Comparison"-Check is not possible with the recent database, because the typification needs corrosion-/wear-values of 0 and doesn't allow any uncertainty-flags for those values. 
+ 
+ 
+ 
+ 
+ 
+Implementation: 
+1. Scripts R07_01_J1 - R07_11_J1 have a detailed description.
+ 
+3. Function R07_01 - R07_11 compare reference-values with listed values.
+ 
+4. Scripts apply rules

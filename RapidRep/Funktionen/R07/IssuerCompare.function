@@ -1,0 +1,10 @@
+/////////----- Checks if Issuer has the value that the cointype mostly is associated with, in the database. -----/////////
+
+
+if ($ReferenceIssuer == $Issuer){ 
+  return false;
+}
+  else {
+    return true;
+  }
+ 

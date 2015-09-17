@@ -1,0 +1,12 @@
+//////////----- Checks if items have smaller DiameterMin-value than DiameterMax -----/////////
+
+
+if ($DiameterMin != null && $DiameterMax != null){
+  if ($DiameterMin > $DiameterMax){ 
+    return true;
+    }
+}
+
+return false;
+
+ 

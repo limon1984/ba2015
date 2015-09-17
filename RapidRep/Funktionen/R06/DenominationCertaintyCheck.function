@@ -1,0 +1,16 @@
+/////////----- Checks if coins in very bad condition (>2) have certainty in Denomination. -----/////////
+
+
+if     ((($Corrosion_Fs > 2 && $Corrosion_Bs > 2) 
+     || ($Corrosion_Fs > 2 && $Wear_Bs > 2)
+     || ($Wear_Fs > 2 && $Corrosion_Bs > 2)
+     || ($Wear_Fs > 2 && $Wear_Bs > 2))            //item is in bad condition on both sides
+
+    && $Denomination_Uncertainty == null && $Denomination != null){     //but uncertainty-flag is not set
+    return true;
+}
+
+//if corrosion or wear is low on min. one side, certainty is okay:
+  else {
+    return false; 
+  } 

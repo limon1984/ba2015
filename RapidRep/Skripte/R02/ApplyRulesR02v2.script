@@ -1,0 +1,17 @@
+#set($resultSet = $RR.getResultSetMatrix("SELECT * FROM $rulesAFE.R02v2()" )) ## Saves SELECT on rules and the implied output in variable "resultSet"
+
+SELECT
+  *,
+  CASE
+  #foreach($e in $resultSet) ## for row in resultSet...
+      #set($PERIODNUM = $e.get(2))
+      #set($PERIODFROM = $e.get(3))
+      #set($PERIODTO = $e.get(4))
+      WHEN #evaluate($e.get(1)) ## access on column 2 (starts counting on 0)and evaluates, if functions not firsthand in rules-sheet
+      THEN '$e.get(5)'
+  #next
+     END AS PERIOD_CHECK                         ## none else
+
+
+
+FROM $CurrentReport.getScriptByName("R02_J1")

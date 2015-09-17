@@ -1,0 +1,10 @@
+/////////----- Meant for skript with coinfind-records having a Denomination which equals some Material. If 'Material_Uncertainty'-Flag is set, the rule takes effect. -----/////////
+
+
+if ($CurrMat_Uncertainty == true){
+  return true;
+}
+  else {
+    return false;
+  }
+

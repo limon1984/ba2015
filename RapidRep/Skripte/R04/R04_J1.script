@@ -1,0 +1,36 @@
+###################################################################################################
+##                                                                                               ##
+##            *****  TABLE - SOME COLUMNS OF COINFIND AND SECONDARY TREATMENT  *****             ##
+##                                                                                               ##
+##  IN USE:  yes                                                                                 ##
+##  PURPOSE: getting DiameterMin/-Max, Wear-/Corrosion, Secondary Treatments                     ## 
+##           and Uncertainty-values to check if Diameters can be correct                         ##
+##  DOES:    Joins coinfind with secondarytreatment via coinsectreat.                            ##
+##           and selects the colums:                                                             ##
+##  COLUMS:  id, Corrosion_Bs Corrosion_Fs, Corrosion_Bs_Uncertainty, Corrosion_Fs_Uncertainty,  ##
+##           Wear_Bs, Wear_Fs, Wear_Bs_Uncertainty, Wear_Fs_Uncertainty, DiameterMin,            ##
+##           DiameterMax, DiameterMax_Uncertainty, DiameterMin_Uncertainty, SecTreat_id,         ## 
+##           SecTreat_Name_en, SecTreat_Uncertainty                                              ##
+##  ELSE:                                                                                        ##
+##                                                                                               ##
+###################################################################################################
+
+
+SELECT  
+
+A.id, 
+A.Corrosion_Bs, A.Corrosion_Fs, 
+A.Corrosion_Bs_Uncertainty, A.Corrosion_Fs_Uncertainty, 
+A.Wear_Bs, A.Wear_Fs, 
+A.Wear_Bs_Uncertainty, A.Wear_Fs_Uncertainty, 
+A.DiameterMin, A.DiameterMax, 
+A.DiameterMax_Uncertainty, A.DiameterMin_Uncertainty,   
+C.id AS SecTreat_id, C.Name_en AS SecTreat_Name_en,
+B.st_uncertainty AS SecTreat_Uncertainty
+      
+FROM      `afergk`.`coinfind` A
+LEFT JOIN `afergk`.`coinsectreat` B ON A.id=B.id_coin
+LEFT JOIN `afergk`.`secondarytreatment` C ON B.id_st = C.id
+
+WHERE A.DiameterMax IS NOT NULL 
+AND A.DiameterMin IS NOT NULL

@@ -1,0 +1,17 @@
+/////////----- Checks if coinfind.DateFrom/To fits with coinfind.Period -----/////////
+
+
+if ($PeriodID == $PeriodNum){                    //picks up the Period-row in the rule-sheet - false, when Period is null
+  if ($DateFrom != null && $PeriodTo != null){   //if DateFrom is given
+      if ($DateFrom > $PeriodTo){                //it must be bigger than Period-border in rule-sheet
+         return true;
+         }
+      }
+  if ($DateTo != null){
+      if ($DateTo < $PeriodFrom){
+        return true;
+        }
+      }
+}
+
+return false;

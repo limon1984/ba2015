@@ -1,0 +1,14 @@
+//////////----- Checks if record with equal DiameterMin- and DiameterMax-value has no secondary treatments, high corrosion or high wear -----/////////
+
+
+if ($DiameterMin == $DiameterMax){
+  if ($SecTreat_id != null){
+    return true;
+    }
+  if ($Corrosion_Bs > 2 || $Corrosion_Fs > 2 || $Wear_Bs > 2 || $Wear_Fs > 2){
+    return true;
+    }
+}
+
+return false; 
+ 

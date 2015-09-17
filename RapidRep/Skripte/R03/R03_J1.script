@@ -1,0 +1,55 @@
+#########################################################################################
+##                                                                                     ##
+##    *****  TABLE - COINFIND-RECORDS WITH DENOMINATIONS RESEMBLING MATERIALS *****    ##
+##                                                                                     ##
+##  IN USE:  yes                                                                       ##
+##  PURPOSE: Listing all coinfind-records that have a denomination resembling a        ##
+##           material and show attributes relevant to compare material/denomination    ##
+##  DOES:    Joins 1. 'material' and 'denomination'                                    ##
+##                 2. 'coinfind'                                                       ##
+##                 3. coinpeculiarities                                                ##
+##  COLUMS:  Record_CoinfindId, Record_MaterialId, Expected_MaterialId,                ##
+##           Record_Material_Uncertainty, Record_MaterialName,                         ##
+##           Record_DenominationName, Record_DenominationId, Record_DenominationId2,   ##
+##           Record_Denomination_Uncertainty, Record_Peculiarities                     ##
+##  ELSE:                                                                              ##
+##                                                                                     ##
+#########################################################################################
+
+SELECT 
+      D.CoinfID, D.CurrMatID, C.ExpectedMatID, D.CurrMat_Uncertainty, 
+      Y.CurrMatName, C.CurrDenomName, D.CurrDenomID, D.CurrDenomID2, 
+      D.CurrDenom_Uncertainty, E.CurrPeculiarities
+
+FROM (
+      SELECT A.id AS ExpectedMatID, B.Name_en AS CurrDenomName, B.id
+      FROM `afergk`.`material` A 
+      INNER JOIN `afergk`.`denomination` B 
+      ON A.Name_en = B.Name_en
+      ) C   ## <- table with denominations resembling materials
+
+INNER JOIN ( 
+            SELECT 
+              id AS CoinfID, Material AS CurrMatID, 
+              Material_Uncertainty AS CurrMat_Uncertainty, 
+              Denomination AS CurrDenomID, 
+              Denomination2 AS CurrDenomID2, 
+              Denomination_Uncertainty AS CurrDenom_Uncertainty 
+            FROM `afergk`.`coinfind` 
+            ) D ## <- coinfind-table reduced to relevant attributes
+
+ON C.id = D.CurrDenomID OR C.id = D.CurrDenomID2
+
+LEFT JOIN (
+           SELECT id_pecu AS CurrPeculiarities, id_coin 
+           FROM `afergk`.`coinpeculiarities` 
+           ) E ## <- coinpeculiarities
+
+ON D.CoinfID = E.id_coin
+
+LEFT JOIN (
+           SELECT id, Name_en AS CurrMatName
+           FROM `afergk`.`material`
+           ) Y ## <- picked up to add the material-name of the record
+
+ON D.CurrMatID = Y.id

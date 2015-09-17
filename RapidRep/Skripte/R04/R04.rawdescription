@@ -1,0 +1,12 @@
+Rule 04: Diameter-Check
+  
+Check, if DiameterMin/-Max fit. DiameterMin must be smaller/equal DiameterMax and DiameterMinMax may not be equal, if the item has a secondary treatment or corrosion/wear is not equal.
+ 
+Implementation: 
+1. Scripts R04_J1 joins coinfind with secondarytreatment (via coinsectreat) and selects columns (check script for detailed description) 
+ 
+2. Function DiameterCheckConsistency checks if DiameterMin is smaller or equals DiameterMax
+ 
+3. Function DiameterCheck looks for Corrosion-/Wear-values bigger than 2 and set secondary treatment-ids. If one of this is found, the rule doubts equality of DiameterMin/-Max
+ 
+4. Script applies rules
